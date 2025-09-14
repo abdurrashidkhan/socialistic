@@ -1,48 +1,182 @@
-'use client'
-import { Button } from '@mui/material'
-import Image from 'next/image'
-import React from 'react'
+'use client';
 
-export default function Navbar() {
+import React, { useEffect, useState } from 'react';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import AdbIcon from '@mui/icons-material/Adb';
+
+const pages = ['Products', 'Pricing', 'Blog'];
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+function Navbar() {
+  const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false); // to prevent hydration errors
+
+  // Detect scroll
+  useEffect(() => {
+    setMounted(true);
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    handleScroll(); // run once on mount
+
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElNav(event.currentTarget);
+  };
+  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorElUser(event.currentTarget);
+  };
+  const handleCloseNavMenu = () => {
+    setAnchorElNav(null);
+  };
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+
+  // Tailwind classes for blur effect on scroll
+  const blurClass = isScrolled
+    ? 'bg-white/70 dark:bg-black/70 backdrop-blur-md shadow-md'
+    : 'bg-transparent';
+
   return (
-       <header className="w-full flex justify-center px-4 py-4 bg-transparent">
-      <nav className="w-full max-w-7xl flex items-center justify-between rounded-xl px-6 py-3 bg-[#0f172a]/80 backdrop-blur-md border border-white/10 shadow-md text-white">
-        
-        {/* Left: Logo */}
-        <div className="flex items-center space-x-2 font-bold text-lg">
-          {/* Replace with your own SVG or Image */}
-          <Image src="/logo.svg" alt="Logo" width={24} height={24} />
-          <span className="text-blue-400">Sitemark</span>
-        </div>
-
-        {/* Center: Menu Links (Hidden on small screens) */}
-        <ul className="hidden md:flex items-center space-x-6 text-sm font-medium text-white/90">
-          <li><a href="#">Features</a></li>
-          <li><a href="#">Testimonials</a></li>
-          <li><a href="#">Highlights</a></li>
-          <li><a href="#">Pricing</a></li>
-          <li><a href="#">FAQ</a></li>
-          <li><a href="#">Blog</a></li>
-        </ul>
-
-        {/* Right: Auth Buttons */}
-        <div className="flex items-center space-x-2">
-          <Button variant="text" sx={{ color: '#fff' }}>Sign in</Button>
-          <Button
-            variant="contained"
+    <AppBar
+      position="fixed"
+      elevation={0}
+      color="transparent"
+      className={`transition-all duration-300 shadow-2xl  border-b-[1px] border-[#e4e4e4] ${mounted ? blurClass : 'bg-transparent'}`}
+    >
+      <Container maxWidth="xl">
+        <Toolbar disableGutters>
+          {/* Desktop logo */}
+          <AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <Typography
+            variant="h6"
+            noWrap
+            component="a"
+            href="#"
             sx={{
-              backgroundColor: '#fff',
-              color: '#000',
-              '&:hover': {
-                backgroundColor: '#e2e8f0',
-              },
-              textTransform: 'none',
+              mr: 2,
+              display: { xs: 'none', md: 'flex' },
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
             }}
           >
-            Sign up
-          </Button>
-        </div>
-      </nav>
-    </header>
-  )
+            LOGO
+          </Typography>
+
+          {/* Mobile nav menu */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+              keepMounted
+              transformOrigin={{ vertical: 'top', horizontal: 'left' }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
+              sx={{ display: { xs: 'block', md: 'none' } }}
+            >
+              {pages.map((page) => (
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+
+          {/* Mobile logo */}
+          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href="#"
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
+
+          {/* Desktop nav buttons */}
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
+              >
+                {page}
+              </Button>
+            ))}
+          </Box>
+
+          {/* Avatar menu */}
+          <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="User Avatar" src="/static/images/avatar/2.jpg" />
+              </IconButton>
+            </Tooltip>
+            <Menu
+              sx={{ mt: '45px' }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+              keepMounted
+              transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {settings.map((setting) => (
+                <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                  <Typography textAlign="center">{setting}</Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
+  );
 }
+
+export default Navbar;
