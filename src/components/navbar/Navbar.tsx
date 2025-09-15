@@ -62,7 +62,7 @@ function Navbar() {
       elevation={0}
       color="transparent"
       className={`transition-all duration-300 shadow-2xl  border-b-[1px] border-[#e4e4e4] ${mounted ? blurClass : 'bg-transparent'}`}
-    >
+    > 
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Desktop logo */}
